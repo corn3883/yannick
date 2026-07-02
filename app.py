@@ -92,22 +92,24 @@ if uploaded_file:
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 
-                # 初始化瀏覽器（已改造為 Streamlit 雲端專用版）
+                # 初始化瀏覽器（自動偵測路徑終極版）
+                import shutil  # 👈 請確保這行有在程式碼上方或這裡匯入
+                
                 options = webdriver.ChromeOptions()
                 options.add_argument('--headless=new')
                 options.add_argument('--disable-gpu')
                 options.add_argument('--window-size=1920,1080')
                 options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
                 
-                # ───  以下為雲端專用修正 ───
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
-                options.binary_location = "/usr/bin/chromium" # 指定雲端瀏覽器位置
                 
-                # 直接使用 Linux 系統內建的驅動程式，不用 ChromeDriverManager 囉！
-                service = Service(executable_path="/usr/bin/chromedriver")
+                # 自動偵測 Linux 系統中的 chromium 和 chromedriver 位置
+                options.binary_location = shutil.which("chromium") or shutil.which("chromium-browser") or "/usr/bin/chromium"
+                driver_path = shutil.which("chromedriver") or "/usr/bin/chromedriver"
+                
+                service = Service(executable_path=driver_path)
                 driver = webdriver.Chrome(service=service, options=options)
-                # ─── 以上為雲端專用修正 ───
                 
                 results_status = []
                 results_time = []
