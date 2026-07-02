@@ -92,14 +92,22 @@ if uploaded_file:
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 
-                # 初始化瀏覽器
+                # 初始化瀏覽器（已改造為 Streamlit 雲端專用版）
                 options = webdriver.ChromeOptions()
                 options.add_argument('--headless=new')
                 options.add_argument('--disable-gpu')
                 options.add_argument('--window-size=1920,1080')
                 options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
                 
-                driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+                # ───  以下為雲端專用修正 ───
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                options.binary_location = "/usr/bin/chromium" # 指定雲端瀏覽器位置
+                
+                # 直接使用 Linux 系統內建的驅動程式，不用 ChromeDriverManager 囉！
+                service = Service(executable_path="/usr/bin/chromedriver")
+                driver = webdriver.Chrome(service=service, options=options)
+                # ─── 以上為雲端專用修正 ───
                 
                 results_status = []
                 results_time = []
