@@ -6,9 +6,22 @@ import time
 import random
 import io
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+
+# 1. 設定 Chrome 參數
+chrome_options = Options()
+chrome_options.add_argument("--headless")          # 無頭模式（雲端必備）
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+# 2. 針對 Streamlit 雲端環境的特殊設定
+# 直接指定 Linux 系統內建的 chromium 與 chromedriver 位置
+chrome_options.binary_location = "/usr/bin/chromium"
+service = Service(executable_path="/usr/bin/chromedriver")
+
+# 3. 啟動瀏覽器（將 service 和 options 帶入）
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # --- 網頁頁面設定 ---
 st.set_page_config(page_title="黑貓宅急便 批次查詢系統", layout="centered")
