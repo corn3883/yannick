@@ -92,24 +92,20 @@ if uploaded_file:
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 
-                # 初始化瀏覽器（自動偵測路徑終極版）
-                import shutil  # 👈 請確保這行有在程式碼上方或這裡匯入
-                
+                # 初始化瀏覽器（最新版 Streamlit 雲端標準原生設定）
                 options = webdriver.ChromeOptions()
-                options.add_argument('--headless=new')
+                options.add_argument('--headless=new')          # 雲端必須是無頭模式
                 options.add_argument('--disable-gpu')
                 options.add_argument('--window-size=1920,1080')
                 options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
                 
+                # 雲端 Linux 環境必備防崩潰參數
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 
-                # 自動偵測 Linux 系統中的 chromium 和 chromedriver 位置
-                options.binary_location = shutil.which("chromium") or shutil.which("chromium-browser") or "/usr/bin/chromium"
-                driver_path = shutil.which("chromedriver") or "/usr/bin/chromedriver"
-                
-                service = Service(executable_path=driver_path)
-                driver = webdriver.Chrome(service=service, options=options)
+                # 💡 重點：不要設定 binary_location，也不要傳入 service=Service(路徑)
+                # 讓新版 Selenium 自動去抓系統剛才裝好的 chromium 和 chromedriver
+                driver = webdriver.Chrome(options=options)
                 
                 results_status = []
                 results_time = []
